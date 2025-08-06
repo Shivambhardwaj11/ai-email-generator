@@ -8,6 +8,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send('AI Email Backend is running ✅');
+});
+
+
 // Routes
 app.use('/api', emailRoutes);
 

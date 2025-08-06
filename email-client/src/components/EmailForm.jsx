@@ -2,6 +2,9 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
+// Automatically use local or production backend
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
 const EmailForm = () => {
   const [recipients, setRecipients] = useState("");
   const [prompt, setPrompt] = useState("");
@@ -12,10 +15,11 @@ const EmailForm = () => {
   const generateEmail = async () => {
     try {
       setLoading(true);
-      const res = await axios.post("http://localhost:5000/api/generate-email", { prompt });
+      const res = await axios.post(`${API_BASE_URL}/api/generate-email`, { prompt });
       setEmailBody(res.data.email);
       toast.success("Email generated!");
     } catch (err) {
+      console.error(err);
       toast.error("Failed to generate email");
     } finally {
       setLoading(false);
@@ -25,13 +29,14 @@ const EmailForm = () => {
   const sendEmail = async () => {
     try {
       setLoading(true);
-      await axios.post("http://localhost:5000/api/send-email", {
+      await axios.post(`${API_BASE_URL}/api/send-email`, {
         recipients,
         subject,
         body: emailBody,
       });
       toast.success("Email sent!");
     } catch (err) {
+      console.error(err);
       toast.error("Failed to send email");
     } finally {
       setLoading(false);
@@ -39,7 +44,7 @@ const EmailForm = () => {
   };
 
   return (
-    <div className="space-y-4 ">
+    <div className="space-y-4">
       <input
         type="text"
         placeholder="Recipients Email (comma separated)"
